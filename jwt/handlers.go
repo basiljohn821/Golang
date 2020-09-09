@@ -87,6 +87,11 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	insForm, err := dbc.Prepare("INSERT INTO tokens(token, tokenString) VALUES(?,?)")
+	if err != nil {
+		panic(err.Error())
+	}
+	insForm.Exec(token, tokenString)
 
 	// Finally, we set the client cookie for "token" as the JWT we just generated
 	// we also set an expiry time which is the same as the token itself
@@ -95,6 +100,7 @@ func Signin(w http.ResponseWriter, r *http.Request) {
 		Value:   tokenString,
 		Expires: expirationTime,
 	})
+
 }
 
 func Welcome(w http.ResponseWriter, r *http.Request) {
